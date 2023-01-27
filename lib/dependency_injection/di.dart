@@ -1,4 +1,5 @@
 import 'package:clean_architecture_tdd_course/core/network/network_info.dart';
+import 'package:clean_architecture_tdd_course/core/util/bloc_observer.dart';
 import 'package:clean_architecture_tdd_course/core/util/input_converter.dart';
 import 'package:clean_architecture_tdd_course/data/datasources/push_notifications_manager.dart';
 import 'package:clean_architecture_tdd_course/data/datasources/trivia_local_data_source.dart';
@@ -11,6 +12,7 @@ import 'package:clean_architecture_tdd_course/firebase_options.dart';
 import 'package:clean_architecture_tdd_course/presentation/bloc/trivia_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
@@ -27,6 +29,9 @@ final getIt = GetIt.instance;
 Future<void> init() async {
   // Firebase
   await registerFirebase();
+
+  // BlocObserver
+  Bloc.observer = SimpleBlocObserver();
 
   // Bloc
   getIt.registerFactory(
