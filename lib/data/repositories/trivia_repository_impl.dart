@@ -34,7 +34,7 @@ class TriviaRepositoryImpl implements TriviaRepositoryContract {
     if (await networkInfo.isConnected) {
       try {
         final remoteTrivia = await getConcreteOrRandom();
-        localDataSource.cacheTrivia(remoteTrivia);
+        localDataSource.saveTrivia(remoteTrivia);
         return Right(remoteTrivia);
       } on ServerException {
         return Left(ServerFailure());

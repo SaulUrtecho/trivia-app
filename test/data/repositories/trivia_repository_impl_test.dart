@@ -84,7 +84,7 @@ void main() {
         await repository.getTrivia(tNumber);
 
         verify(mockTriviaRemoteDataSource.getTrivia(tNumber));
-        verify(mockTriviaLocalDataSource.cacheTrivia(tNumberTriviaModel));
+        verify(mockTriviaLocalDataSource.saveTrivia(tNumberTriviaModel));
       });
 
       test('should return server failure when the call to remote data source is unsuccessful', () async {
@@ -146,7 +146,7 @@ void main() {
         await repository.getRandomTrivia();
 
         verify(mockTriviaRemoteDataSource.getRandomTrivia());
-        verify(mockTriviaLocalDataSource.cacheTrivia(tNumberTriviaModel));
+        verify(mockTriviaLocalDataSource.saveTrivia(tNumberTriviaModel));
       });
 
       test('should return server failure when the call to remote data source is unsuccessful', () async {

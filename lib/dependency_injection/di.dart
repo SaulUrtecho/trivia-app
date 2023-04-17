@@ -15,7 +15,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:get_it/get_it.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart' show Client;
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,7 +34,7 @@ Future<void> init() async {
   Bloc.observer = SimpleBlocObserver();
 
   // Bloc
-  getIt.registerFactory(
+  getIt.registerFactory<TriviaBloc>(
     () => TriviaBloc(
       getIt<GetTriviaUseCase>(),
       getIt<GetRandomTriviaUseCase>(),
@@ -43,34 +43,34 @@ Future<void> init() async {
   );
 
   // Use cases
-  getIt.registerFactory(() => GetTriviaUseCase(getIt()));
-  getIt.registerFactory(() => GetRandomTriviaUseCase(getIt()));
+  getIt.registerFactory<GetTriviaUseCase>(() => GetTriviaUseCase(getIt<TriviaRepositoryContract>()));
+  getIt.registerFactory<GetRandomTriviaUseCase>(() => GetRandomTriviaUseCase(getIt<TriviaRepositoryContract>()));
 
   // Repository
   getIt.registerLazySingleton<TriviaRepositoryContract>(
     () => TriviaRepositoryImpl(
-      remoteDataSource: getIt(),
-      localDataSource: getIt(),
-      networkInfo: getIt(),
+      remoteDataSource: getIt<TriviaRemoteDataSource>(),
+      localDataSource: getIt<TriviaLocalDataSource>(),
+      networkInfo: getIt<NetworkInfo>(),
     ),
   );
 
   // Data Sources
   getIt.registerLazySingleton<TriviaRemoteDataSource>(
-    () => TriviaRemoteDataSourceImpl(client: getIt()),
+    () => TriviaRemoteDataSourceImpl(client: getIt<Client>()),
   );
 
   getIt.registerLazySingleton<TriviaLocalDataSource>(
-    () => TriviaLocalDataSourceImpl(sharedPreferences: getIt()),
+    () => TriviaLocalDataSourceImpl(sharedPreferences: getIt<SharedPreferences>()),
   );
 
   //! Core
-  getIt.registerFactory(() => InputConverter());
-  getIt.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(getIt()));
+  getIt.registerFactory<InputConverter>(() => InputConverter());
+  getIt.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(getIt<InternetConnectionChecker>()));
 
   //! External
   final sharedPreferences = await SharedPreferences.getInstance();
-  getIt.registerLazySingleton(() => sharedPreferences);
-  getIt.registerLazySingleton(() => http.Client());
-  getIt.registerLazySingleton(() => InternetConnectionChecker());
+  getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+  getIt.registerLazySingleton<Client>(() => Client());
+  getIt.registerLazySingleton<InternetConnectionChecker>(() => InternetConnectionChecker());
 }

@@ -45,7 +45,7 @@ void main() {
     const tNumberTriviaModel = TriviaModel(text: 'test trivia', number: 1);
 
     test('should call SharedPreferences to cache the data', () async {
-      triviaLocalDataSourceImpl.cacheTrivia(tNumberTriviaModel);
+      triviaLocalDataSourceImpl.saveTrivia(tNumberTriviaModel);
       final expectedJsonString = json.encode(tNumberTriviaModel.toJson());
       verify(mockSharedPreferences.setString(CACHED_NUMBER_TRIVIA, expectedJsonString));
     });
